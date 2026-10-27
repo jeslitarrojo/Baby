@@ -440,25 +440,6 @@
       photoIndex = (photoIndex + delta + photos.length) % photos.length;
       renderPhoto();
     }
-    function loadPhotos() {
-      if (photosRequested || !(window.google && google.script && google.script.run)) return;
-      photosRequested = true;
-      google.script.run
-        .withSuccessHandler(result => {
-          if (Array.isArray(result)) {
-            photos = captions.map((caption,i) => ({
-              caption: typeof result[i]?.caption === 'string' ? result[i].caption : caption,
-              image: typeof result[i]?.image === 'string' && result[i].image.startsWith('data:image/') ? result[i].image : ''
-            }));
-            renderPhoto();
-          }
-        })
-        .withFailureHandler(error => {
-          console.warn('Photos not loaded; showing placeholders.', error);
-          photosRequested = false;
-        })
-        .getPhotos();
-    }
     let swipeStartX = 0;
     document.querySelector('.photo-stage').addEventListener('touchstart',event => {swipeStartX = event.changedTouches[0].screenX;},{passive:true});
     document.querySelector('.photo-stage').addEventListener('touchend',event => {
