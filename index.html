@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#fff3f6">
+  <title>Just For You, Bebe 💗</title>
+  <style>
+    :root {
+      --cream: #fffaf6;
+      --shell: #fff8f9;
+      --rose-50: #fff0f4;
+      --rose-100: #ffdfe8;
+      --rose-200: #f9bdd1;
+      --rose: #d85a89;
+      --berry: #9c365f;
+      --ink: #642f49;
+      --muted: #986b7e;
+      --outline: #f3d7e1;
+      --shadow: 0 20px 75px rgba(146, 61, 98, .15);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      font-family: ui-rounded, 'Trebuchet MS', 'Segoe UI', sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 9% 12%, #ffe4ed 0 17%, transparent 40%),
+        radial-gradient(circle at 85% 78%, #ffdae6 0 13%, transparent 43%),
+        #fff6f5;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px 16px;
+      overflow-x: hidden;
+    }
+    button { font: inherit; }
+    button:focus-visible { outline: 3px solid #a52d62; outline-offset: 3px; }
+    .ambient-spark { position: fixed; z-index: -1; color: #f6aec7; opacity: .55; pointer-events: none; font-size: 30px; }
+    .ambient-spark.s1 { left: 13%; top: 17%; }
+    .ambient-spark.s2 { right: 13%; top: 40%; font-size: 18px; }
+    .ambient-spark.s3 { left: 18%; bottom: 12%; font-size: 20px; }
+    .app-shell {
+      position: relative;
+      isolation: isolate;
+      width: min(100%, 470px);
+      min-height: min(780px, calc(100dvh - 48px));
+      border: 1px solid rgba(244, 190, 208, .8);
+      border-radius: 32px;
+      padding: 0 24px 30px;
+      overflow: hidden;
+      background: linear-gradient(160deg, #fffdfd, var(--shell) 62%, #fff0f4);
+      box-shadow: var(--shadow);
+    }
+    .app-shell::before {
+      content: ''; position: absolute; top: -125px; right: -130px;
+      width: 330px; height: 330px; border-radius: 50%; background: #fff0f5;
+      z-index: -1;
+    }
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 22px 0 14px; gap: 10px; }
+    .brand { font-family: Georgia, serif; font-weight: 700; color: var(--berry); font-style: italic; font-size: 18px; letter-spacing: -.5px; }
+    .brand span { color: var(--rose); }
+    .music-toggle {
+      display: flex; align-items: center; justify-content: center; gap: 5px; min-width: 42px; height: 38px;
+      padding: 0 10px; border-radius: 19px; border: 1px solid #f5c6d6; background: #fff;
+      color: var(--berry); cursor: pointer; box-shadow: 0 3px 8px #eeb1c222;
+      font-size: 19px;
+    }
+    .music-toggle .sound-label { font-size: 10px; font-weight: 800; letter-spacing: .08em; }
+    .progress-meta { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); font-weight: 800; letter-spacing: .16em; text-transform: uppercase; margin: 6px 0 8px; }
+    .progress-track { height: 5px; background: #f8e1e9; border-radius: 10px; overflow: hidden; }
+    .progress-fill { width: 14.286%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #f29dbd, #d9578b); transition: width .45s ease; }
+    main { position: relative; z-index: 1; }
+    .screen { display: none; opacity: 0; text-align: center; padding: 18px 0 10px; }
+    .screen.active { display: block; animation: screen-in .45s ease forwards; }
+    @keyframes screen-in { from {opacity:0; transform:translateY(14px)} to {opacity:1; transform:translateY(0)} }
+    .eyebrow { margin: 8px 0 12px; color: var(--rose); font-size: 11px; font-weight: 800; letter-spacing: .17em; text-transform: uppercase; }
+    h1, h2 { font-family: Georgia, 'Times New Roman', serif; font-weight: 700; color: var(--berry); letter-spacing: -.035em; line-height: 1.13; }
+    h1 { font-size: clamp(36px, 9vw, 47px); margin: 12px 0; }
+    h2 { font-size: clamp(31px, 8vw, 39px); margin: 10px 0 16px; }
+    p { line-height: 1.75; color: #89576c; font-size: 14px; }
+    .lede { font-size: 15px; margin: 12px auto 20px; max-width: 360px; }
+    .fineprint { font-size: 11px; color: #ab8796; line-height: 1.5; }
+    .hero-art { width: 220px; height: 210px; margin: 8px auto 12px; position: relative; display: grid; place-items: center; }
+    .hero-ring { position: absolute; inset: 6px; border: 2px dashed #f3b8ce; border-radius: 50%; animation: ring-rotate 30s linear infinite; }
+    @keyframes ring-rotate { to { transform: rotate(360deg); } }
+    .envelope {
+      width: 155px; height: 106px; background: linear-gradient(135deg,#f59fbe,#e4779c);
+      border-radius: 8px; position: relative; transform: rotate(-8deg); box-shadow: 0 13px 30px #d65a8b40;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .envelope:before { content: ''; position: absolute; inset: 0; clip-path: polygon(0 0,100% 0,50% 56%); background: #ffd4e2; border-radius: 8px 8px 0 0; }
+    .envelope:after { content: '♥'; position: absolute; top: 41px; left: 63px; display: grid; place-items: center; background: #fff; color: #ce527c; width: 31px; height: 31px; border-radius: 50%; box-shadow: 0 2px 5px #b3426c2a; }
+    .hero-deco { position: absolute; font-size: 29px; animation: bob 3s ease-in-out infinite; }
+    .hero-deco.d1 { top: 0; right: 21px; } .hero-deco.d2 { left: 6px; top: 58px; font-size: 21px; animation-delay: -.6s; } .hero-deco.d3 { bottom: 12px; right: 8px; animation-delay: -1.1s; }
+    @keyframes bob { 50% { transform: translateY(-9px) rotate(7deg); } }
+    .pill { display: inline-block; padding: 8px 12px; border: 1px solid #f5cbd9; background: #fff; border-radius: 999px; color: var(--rose); font-size: 11px; letter-spacing: .08em; font-weight: 800; }
+    .primary {
+      border: 0; display: flex; justify-content: center; align-items: center; gap: 8px; text-decoration: none;
+      width: 100%; padding: 16px 15px; color: white; background: linear-gradient(100deg,#dc6594,#c64578);
+      border-radius: 19px; font-size: 15px; font-weight: 800; cursor: pointer;
+      box-shadow: 0 9px 24px #ca588442; transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .primary:active { transform: scale(.975); }
+    .primary:disabled { opacity: .55; cursor: not-allowed; }
+    .secondary { border: 1px solid #edbfd0; background: #fff; color: var(--berry); border-radius: 16px; padding: 13px 16px; font-size: 13px; font-weight: 800; cursor: pointer; }
+    .button-space { margin-top: 22px; }
+    .card { border: 1px solid #f6d7e2; box-shadow: 0 8px 26px #d66f9420; border-radius: 24px; background: #fff; padding: 22px 18px; margin: 18px 0; }
+    .card.soft { background: linear-gradient(165deg,#fff,#ffeff4); }
+    .question-count { font-size: 11px; color: var(--rose); letter-spacing: .13em; font-weight: 900; text-transform: uppercase; }
+    .question-text { color: var(--berry); font-size: 22px; font-family: Georgia,serif; line-height: 1.35; margin: 11px 0 18px; font-weight: bold; }
+    .choice-list { display: grid; gap: 10px; }
+    .choice, .date-choice { width: 100%; text-align: left; border: 1.5px solid #f0ccd8; border-radius: 17px; padding: 15px 16px; background: #fffafc; color: var(--ink); font-size: 14px; font-weight: 750; cursor: pointer; transition: .2s ease; }
+    .choice:hover, .date-choice:hover { background: #ffecf3; border-color: #dd80a0; transform: translateY(-1px); }
+    .choice.selected, .date-choice.selected { background: #ffe5ee; border-color: #cf628a; }
+    .choice:disabled, .date-choice:disabled { cursor: default; opacity: .8; transform: none; }
+    .result { border-radius: 16px; padding: 15px; background: #fff0f5; color: var(--berry); font-weight: 750; line-height: 1.6; margin-top: 14px; border: 1px solid #f4cdda; font-size: 14px; }
+    [hidden] { display: none !important; }
+    .meter-wrap { padding: 8px 0 10px; }
+    .heart-button { background: transparent; border: 0; font-size: 105px; line-height: 1.2; display: block; margin: 18px auto 7px; cursor: pointer; transform: scale(var(--heart-scale,1)); transition: transform .22s cubic-bezier(.2,1.5,.5,1); filter: drop-shadow(0 12px 15px #c45e8f45); }
+    .heart-button:active { transform: scale(calc(var(--heart-scale, 1) * .91)); }
+    .meter-caption { font-weight: 750; min-height: 45px; }
+    .meter-dots { display: flex; gap: 9px; justify-content: center; padding: 9px; }
+    .meter-dots span { width: 10px; height: 10px; border-radius: 100%; background: #f4d3df; }
+    .meter-dots span.on { background: #d85989; }
+    .infinite { font-family: Georgia,serif; font-size: 50px; color: var(--rose); margin: 6px; }
+    .photo-frame { max-width: 305px; margin: 4px auto; background: #fff; padding: 12px 12px 16px; border: 1px solid #f2d4de; box-shadow: 0 11px 27px #963b6836; transform: rotate(-2deg); }
+    .photo-stage { aspect-ratio: 4/4.2; border-radius: 3px; background: linear-gradient(155deg,#ffe5ee,#f7bad0 58%,#fce8e9); overflow: hidden; position: relative; display: grid; place-items: center; }
+    .photo-stage img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .photo-placeholder { display: grid; gap: 9px; place-items: center; padding: 16px; color: #9f5875; }
+    .photo-placeholder .art { font-size: 64px; }
+    .photo-placeholder .hint { font-size: 11px; color: #925c72; line-height: 1.5; }
+    .photo-caption { font-family: Georgia,serif; font-size: 15px; color: var(--ink); line-height: 1.5; margin: 13px 3px 0; font-style: italic; }
+    .carousel-nav { display: flex; align-items: center; justify-content: space-around; gap: 15px; margin: 19px auto; }
+    .circle-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid #edbed0; background: #fff; color: var(--berry); font-size: 18px; cursor: pointer; }
+    .dots { display: flex; gap: 7px; align-items: center; }
+    .dots span { display: block; width: 7px; height: 7px; background: #f3c7d7; border-radius: 15px; transition: .2s; }
+    .dots span.on { background: var(--rose); width: 20px; }
+    .date-choice { display: flex; align-items: center; gap: 13px; }
+    .date-icon { font-size: 28px; min-width: 37px; }
+    .date-choice small { display: block; font-size: 11px; font-weight: 500; color: #a47689; margin-top: 4px; }
+    .letter { text-align: left; padding: 22px 22px 12px; background: repeating-linear-gradient(#fffdfc, #fffdfc 28px, #fce7ed 29px); border: 1px solid #f2d7df; border-radius: 16px; box-shadow: 0 12px 28px #9a476828; transform: rotate(-1deg); }
+    .letter p { color: #754457; font-size: 13px; line-height: 2.15; margin: 0 0 12px; }
+    .letter strong { color: var(--berry); }
+    .letter .letter-line { opacity: 0; transform: translateY(8px); transition: opacity .55s ease,transform .55s ease; }
+    .letter.open .letter-line { opacity: 1; transform: translateY(0); }
+    .letter.open .letter-line:nth-child(2) {transition-delay: .18s}.letter.open .letter-line:nth-child(3) {transition-delay:.35s}.letter.open .letter-line:nth-child(4) {transition-delay:.52s}.letter.open .letter-line:nth-child(5) {transition-delay:.7s}.letter.open .letter-line:nth-child(6) {transition-delay:.9s}.letter.open .letter-line:nth-child(7) {transition-delay:1.08s}.letter.open .letter-line:nth-child(8) {transition-delay:1.23s}
+    .envelope-secret { width: 170px; height: 135px; border: 0; display: block; margin: 24px auto; background: #ffe1ea; border-radius: 20px; box-shadow: 0 15px 35px #b444703b; font-size: 77px; cursor: pointer; animation: bob 2.9s ease-in-out infinite; }
+    .pass { border: 2px solid #d76a92; padding: 24px 16px; background: linear-gradient(145deg,#fff7fa,#ffe5ee); border-radius: 24px; box-shadow: 0 8px 30px #a7477426; }
+    .pass-title { color: var(--berry); font-family: Georgia,serif; font-size: 27px; line-height: 1.2; margin: 7px 0 14px; }
+    .benefits { list-style: none; padding: 0; margin: 12px 0; text-align: left; }
+    .benefits li { padding: 9px 0; border-bottom: 1px dashed #edbfd0; font-size: 13px; color: #7c475d; }
+    .benefits li:last-child { border-bottom: 0; }
+    .bouquet-art { font-size: 95px; margin: 20px auto 4px; animation: bob 3s ease-in-out infinite; filter: drop-shadow(0 12px 10px #ba5d8745); }
+    .the-end { font-family: Georgia,serif; font-size: 29px; font-style: italic; color: var(--berry); }
+    .floating-layer { position: absolute; inset: 0; pointer-events: none; z-index: 15; overflow: hidden; border-radius: 32px; }
+    .flying-heart { position: absolute; bottom: -30px; opacity: 0; font-size: var(--font-size, 23px); left: var(--left,50%); animation: fly var(--duration, 3.8s) ease-in forwards; }
+    @keyframes fly { 0% {transform:translateY(0) rotate(-20deg) scale(.6);opacity:0} 15% {opacity:.88} 85% {opacity:.9} 100% {transform:translateY(calc(-900px)) translateX(var(--drift,10px)) rotate(22deg) scale(1.4);opacity:0} }
+    .footer { color: #c58aa1; font-size: 11px; text-align: center; margin: 29px 0 4px; }
+    @media (max-width: 520px) {
+      body { display: block; padding: 0; background: #fff9fa; }
+      .app-shell { width: 100%; min-height: 100dvh; border: 0; border-radius: 0; padding: 0 22px 24px; box-shadow: none; }
+      .floating-layer { border-radius: 0; }
+      .screen { padding-top: 16px; }
+      .hero-art { height: 197px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *:before, *:after { animation-duration: .001ms !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <span class="ambient-spark s1" aria-hidden="true">♡</span><span class="ambient-spark s2" aria-hidden="true">✦</span><span class="ambient-spark s3" aria-hidden="true">♡</span>
+  <div class="app-shell" id="app">
+    <header>
+      <div class="topbar">
+        <div class="brand">♡ from your <span>Bebe</span></div>
+        <button class="music-toggle" id="musicToggle" type="button" aria-label="Turn music on" aria-pressed="false" title="Music on or off">♫ <span class="sound-label" id="musicLabel">OFF</span></button>
+      </div>
+      <div class="progress-meta"><span id="chapterLabel">CHAPTER 01 / 07</span><span id="chapterName">A LOVE NOTE</span></div>
+      <div class="progress-track" aria-label="Your progress"><div class="progress-fill" id="progressFill"></div></div>
+    </header>
+
+    <main id="main">
+      <section class="screen active" id="screen1" aria-labelledby="title1">
+        <div class="eyebrow">Made especially for you</div>
+        <div class="hero-art" aria-hidden="true"><div class="hero-ring"></div><div class="envelope"></div><span class="hero-deco d1">💕</span><span class="hero-deco d2">✨</span><span class="hero-deco d3">💗</span></div>
+        <span class="pill">✦ YOU HAVE (1) LOVE LETTER ✦</span>
+        <h1 id="title1">Hey, Bebe! 💌</h1>
+        <p class="lede">I was going to send you a normal sweet message… but apparently I wanted to be extra today. 🤭</p>
+        <div class="card soft"><p style="margin:0">I made this little surprise for someone beautiful, adorable, and maybe a *tiny* bit annoying. Just kidding! 😘<br><strong>Ready, Bebe?</strong></p></div>
+        <button class="primary button-space" type="button" data-action="start">Open it, Bebe! 💗 &nbsp;→</button>
+        <p class="fineprint">Warning: may cause excessive smiling ♡</p>
+      </section>
+
+      <section class="screen" id="screen2" aria-labelledby="title2">
+        <div class="eyebrow">A highly scientific investigation</div>
+        <h2 id="title2">The Bebe Quiz 🤭</h2>
+        <p>Three very important questions. Absolutely no pressure, Bebe.</p>
+        <div class="card">
+          <div class="question-count" id="quizCount">Question 1 of 3</div>
+          <div class="question-text" id="quizQuestion"></div>
+          <div class="choice-list" id="quizChoices"></div>
+          <div class="result" id="quizResponse" hidden aria-live="polite"></div>
+        </div>
+        <button class="primary button-space" type="button" id="quizNext" data-action="quiz-next" hidden>Next question 💕 →</button>
+      </section>
+
+      <section class="screen" id="screen3" aria-labelledby="title3">
+        <div class="eyebrow">Top-secret love technology</div>
+        <h2 id="title3">The Love-O-Meter ❤️</h2>
+        <p>Bebe, I made a super advanced machine to measure how much I love you. Tap the heart five times!</p>
+        <div class="meter-wrap" id="meterGame">
+          <button class="heart-button" id="tapHeart" type="button" aria-label="Tap the heart">💗</button>
+          <div class="meter-dots" id="meterDots" aria-label="Zero of five taps"><span></span><span></span><span></span><span></span><span></span></div>
+          <p class="meter-caption" id="meterStatus" aria-live="polite">Go on, Bebe! Give it a tap. 👀</p>
+        </div>
+        <div class="card soft" id="meterResult" hidden>
+          <div class="eyebrow">⚠ Critical love overload</div><div class="infinite">∞</div>
+          <div class="question-text">INFINITE LOVE DETECTED!</div>
+          <p>Even technology can't measure how much your Bebe loves you. HAHAHA! 😘</p>
+        </div>
+        <button class="primary button-space" type="button" id="meterNext" data-action="to-photos" hidden>Awww, what's next? 🥹 →</button>
+      </section>
+
+      <section class="screen" id="screen4" aria-labelledby="title4">
+        <div class="eyebrow">Little moments, big feelings</div>
+        <h2 id="title4">Our Little Memories 📸</h2>
+        <p>Some of my favorite memories have one thing in common… <strong>YOU.</strong> ❤️</p>
+        <div class="photo-frame">
+          <div class="photo-stage">
+            <img id="photoImage" src="" alt="A lovely memory with Bebe" hidden>
+            <div class="photo-placeholder" id="photoPlaceholder"><span class="art">💑</span><span class="hint">Your photo goes here!<br>We'll add our pictures soon. 💕</span></div>
+          </div>
+          <div class="photo-caption" id="photoCaption">One of my favorite moments with my favorite person. 💗</div>
+        </div>
+        <div class="carousel-nav"><button class="circle-btn" data-action="photo-prev" type="button" aria-label="Previous picture">←</button><div class="dots" id="photoDots" aria-label="Photo 1 of 4"></div><button class="circle-btn" data-action="photo-next" type="button" aria-label="Next picture">→</button></div>
+        <p class="fineprint">Swipe the photo to see more memories ♡</p>
+        <button class="primary button-space" type="button" data-action="to-date">More surprises? 👀 →</button>
+      </section>
+
+      <section class="screen" id="screen5" aria-labelledby="title5">
+        <div class="eyebrow">One tiny question</div>
+        <h2 id="title5">Bebe, Date Time! 💑</h2>
+        <p>No, not THAT kind of proposal! HAHAHA. 🤭 Choose our next little adventure.</p>
+        <div class="choice-list" id="dateChoices">
+          <button class="date-choice" type="button" data-date="movie"><span class="date-icon">🍿</span><span>Movie night + cuddles<small>Best seats are right next to you.</small></span></button>
+          <button class="date-choice" type="button" data-date="food"><span class="date-icon">🍕</span><span>Food date!<small>Good food, better company.</small></span></button>
+          <button class="date-choice" type="button" data-date="surprise"><span class="date-icon">💐</span><span>Surprise me, Bebe!<small>You're trusting me with the plan?</small></span></button>
+        </div>
+        <div class="result" id="dateResult" hidden aria-live="polite"></div>
+        <button class="primary button-space" id="dateNext" type="button" data-action="to-letter" hidden>One more thing, Bebe… 💌 →</button>
+      </section>
+
+      <section class="screen" id="screen6" aria-labelledby="title6">
+        <div class="eyebrow">From me, to my favorite person</div>
+        <h2 id="title6">Jokes aside, Bebe… 💌</h2>
+        <p>I've been teasing you this whole time. But I want you to know something real.</p>
+        <button class="primary button-space" type="button" id="openLetter" data-action="open-letter">Read my letter 💗</button>
+        <div class="letter button-space" id="letter" hidden>
+          <p class="letter-line"><strong>My Bebe,</strong></p>
+          <p class="letter-line">I know I've been making silly jokes throughout this little surprise, but I wanted to make something that reminds you how special you are to me.</p>
+          <p class="letter-line">You make ordinary days brighter. I love our random conversations, the way we laugh together, and the tiny moments when we're doing absolutely nothing.</p>
+          <p class="letter-line">Life isn't always easy. We have tiring days and moments that don't go exactly as planned. But I'm so grateful that I get to share all of it with you.</p>
+          <p class="letter-line">I'm grateful for the memories we've already made and excited for all the ones still waiting for us.</p>
+          <p class="letter-line">And if I had to choose my favorite person all over again… <strong>I'd still choose you, Bebe. Again and again.</strong></p>
+          <p class="letter-line">I love you so much. More than these little words can explain. ❤️</p>
+          <p class="letter-line"><strong>Love,<br>Your Bebe 💕</strong></p>
+        </div>
+        <button class="primary button-space" id="letterNext" data-action="to-secret" type="button" hidden>There's still a secret? 👀 →</button>
+      </section>
+
+      <section class="screen" id="screen7" aria-labelledby="title7">
+        <div class="eyebrow">Psst… final surprise unlocked</div>
+        <h2 id="title7">Wait, Bebe! 🔐💝</h2>
+        <div id="secretLocked">
+          <p>You thought that was everything? HAHAHA! Not yet. Tap the envelope to claim your secret reward.</p>
+          <button class="envelope-secret" type="button" data-action="unlock" aria-label="Open your secret envelope">💌</button>
+          <p class="fineprint">For Bebe's eyes only ♡</p>
+        </div>
+        <div id="secretPass" hidden>
+          <div class="pass">
+            <div class="eyebrow">Congratulations, Bebe!</div>
+            <div style="font-size:46px">🎟️💖</div>
+            <div class="pass-title">LIFETIME<br>BEBE LOVE PASS</div>
+            <p style="margin:0">Your exclusive membership includes:</p>
+            <ul class="benefits"><li>❤️ Unlimited hugs</li><li>😘 Unlimited kisses</li><li>🥰 Cuddles whenever we're together</li><li>🍽️ More cute little dates</li><li>🤭 Unlimited silly jokes</li><li>💌 Random sweet messages</li><li>💕 A Bebe who'll keep making you smile</li></ul>
+            <p class="fineprint">No expiration. No hidden charges. Just lots and lots of love.</p>
+          </div>
+          <button class="primary button-space" type="button" data-action="bouquet">Wait… one last thing! 💐 →</button>
+        </div>
+        <div id="secretBouquet" hidden>
+          <div class="bouquet-art" aria-hidden="true">💐</div>
+          <div class="pill">ONE FINAL LITTLE GIFT</div>
+          <h2>A bouquet for my Bebe 💗</h2>
+          <p>I can't hand you these flowers through a screen… so here's a little digital bouquet until I can give you the real thing. 🥹</p>
+          <div class="card soft"><p>Thank you for being my Bebe. And thank you for letting me be yours.<br><strong>I love you, Bebe. Always. ❤️</strong></p>
+          <p id="finalDate" class="fineprint" hidden></p></div>
+          <button class="primary button-space" id="kissBtn" type="button" data-action="kiss">Send your Bebe a kiss 😘</button>
+          <div id="kissResponse" class="result" aria-live="polite" hidden>MWAAAAAH! 😘💋<br>Kiss received! Sending you a thousand kisses back! I LOVE YOUUU, BEBE! 💕</div>
+          <button class="secondary button-space" id="replayBtn" type="button" data-action="replay" hidden>Experience it again ♡</button>
+          <p class="the-end">Forever your Bebe ♡</p>
+        </div>
+      </section>
+    </main>
+    <footer class="footer">Handmade with extra love, just for you. ♡</footer>
+    <div class="floating-layer" id="floatingLayer" aria-hidden="true"></div>
+  </div>
+
+  <script>
+    'use strict';
+    const $ = id => document.getElementById(id);
+    const sections = [...document.querySelectorAll('.screen')];
+    const chapterNames = ['A LOVE NOTE', 'THE FLIRTY QUIZ', 'LOVE-O-METER', 'OUR MEMORIES', 'NEXT DATE', 'MY LETTER', 'SECRET REVEAL'];
+    const quiz = [
+      {question:'Bebe, did you know you\'re ridiculously cute?', choices:[
+        {label:'Yes, I know. 😌', response:'Wow, confident ka talaga, Bebe! HAHAHA. But you\'re right. Dangerously cute. 😘'},
+        {label:'Noooo, stop it! 🥹', response:'Nope! I refuse to stop reminding you how beautiful you are. Sorry, Bebe! 🤭'}]},
+      {question:'If I appeared beside you right now, what would you want?', choices:[
+        {label:'A big hug! 🥰', response:'One extra-long Bebe hug coming right up. No rushing allowed! ❤️'},
+        {label:'A kiss! 😘', response:'Ayieeeee! Someone\'s feeling romantic today. Come here, Bebe! 🤭'},
+        {label:'Both, obviously! 😏', response:'HAHAHA! That\'s exactly the answer I was hoping for. 😘'}]},
+      {question:'Final question… who\'s my favorite person?', choices:[
+        {label:'Me, obviously! 💅', response:'CORRECT! Full marks! Certified favorite person ka talaga! 🏆❤️'},
+        {label:'Hmm, I wonder who? 👀', response:'BEBE! Don\'t make me say it a thousand times. IT\'S YOUUU! 😭💕'}]}
+    ];
+    const captions = [
+      'One of my favorite moments with my favorite person. 💗',
+      'Look at us being all cute. HAHAHA! 🤭',
+      'I\'d happily experience this day with you all over again. 🥹',
+      'More memories like this, please. With you. Always. ❤️'
+    ];
+    const dateDetails = {
+      movie: {name:'Movie night + cuddles 🍿', response:'Movie night it is! But can I have unlimited cuddles? 🥺❤️'},
+      food: {name:'Food date 🍕', response:'YESSS! Good food and my favorite person? Already a perfect date. 😘'},
+      surprise: {name:'Surprise date 💐', response:'OHHH! You\'re trusting me with the plan? Challenge accepted, Bebe! 😏💕'}
+    };
+    let currentScreen = 1;
+    let quizIndex = 0;
+    let quizAnswered = false;
+    let meterCount = 0;
+    let photoIndex = 0;
+    let photos = captions.map(caption => ({caption, image:''}));
+    let photosRequested = false;
+    let selectedDate = '';
+    let musicOn = false;
+    let audioCtx = null;
+    let audioTimer = null;
+    let nextNoteTime = 0;
+    let noteIndex = 0;
+    const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function showScreen(number) {
+      if (number < 1 || number > 7) return;
+      currentScreen = number;
+      sections.forEach(section => {
+        const active = section.id === 'screen' + number;
+        section.classList.toggle('active', active);
+        section.setAttribute('aria-hidden', String(!active));
+      });
+      $('chapterLabel').textContent = 'CHAPTER ' + String(number).padStart(2, '0') + ' / 07';
+      $('chapterName').textContent = chapterNames[number - 1];
+      $('progressFill').style.width = (number / 7 * 100) + '%';
+      window.scrollTo({top:0, behavior:prefersReducedMotion?'instant':'smooth'});
+      if (number === 2) renderQuiz();
+      if (number === 4) {renderPhoto(); loadPhotos();}
+    }
+
+    function renderQuiz() {
+      const item = quiz[quizIndex];
+      $('quizCount').textContent = 'QUESTION ' + (quizIndex + 1) + ' OF ' + quiz.length;
+      $('quizQuestion').textContent = item.question;
+      $('quizChoices').replaceChildren();
+      $('quizResponse').hidden = true;
+      $('quizNext').hidden = true;
+      quizAnswered = false;
+      item.choices.forEach((choice,index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'choice';
+        button.textContent = choice.label;
+        button.addEventListener('click', () => answerQuiz(index));
+        $('quizChoices').appendChild(button);
+      });
+    }
+    function answerQuiz(index) {
+      if (quizAnswered) return;
+      quizAnswered = true;
+      const choices = $('quizChoices').querySelectorAll('button');
+      choices.forEach((button, i) => {
+        button.disabled = true;
+        if (i === index) button.classList.add('selected');
+      });
+      $('quizResponse').textContent = quiz[quizIndex].choices[index].response;
+      $('quizResponse').hidden = false;
+      $('quizNext').textContent = quizIndex === quiz.length - 1 ? 'Next surprise, Bebe! 💕 →' : 'Next question 💕 →';
+      $('quizNext').hidden = false;
+      floatHearts(5);
+    }
+    function nextQuiz() {
+      if (!quizAnswered) return;
+      if (quizIndex < quiz.length - 1) {quizIndex++; renderQuiz();}
+      else showScreen(3);
+    }
+
+    function tapMeter() {
+      if (meterCount >= 5) return;
+      meterCount++;
+      $('tapHeart').style.setProperty('--heart-scale', String(1 + meterCount * .095));
+      $('meterDots').querySelectorAll('span').forEach((dot,i) => dot.classList.toggle('on',i < meterCount));
+      $('meterDots').setAttribute('aria-label',meterCount + ' of five taps');
+      $('meterStatus').textContent = ['Awww, look at that! 💗','More love incoming! 💕','Wait… it\'s getting stronger! 👀','Bebe, I think you broke it! 😭','CRITICAL ERROR! 💥❤️'][meterCount - 1];
+      floatHearts(5);
+      if (meterCount === 5) {
+        $('tapHeart').disabled = true;
+        setTimeout(() => { $('meterGame').hidden = true; $('meterResult').hidden = false; $('meterNext').hidden = false; floatHearts(24); }, 620);
+      }
+    }
+
+    function renderPhoto() {
+      const photo = photos[photoIndex];
+      $('photoCaption').textContent = photo.caption;
+      $('photoImage').hidden = !photo.image;
+      $('photoPlaceholder').hidden = !!photo.image;
+      if (photo.image) $('photoImage').src = photo.image;
+      else $('photoImage').removeAttribute('src');
+      $('photoDots').replaceChildren();
+      for (let i=0;i<photos.length;i++) {
+        const dot = document.createElement('span');
+        dot.classList.toggle('on',i===photoIndex);
+        $('photoDots').appendChild(dot);
+      }
+      $('photoDots').setAttribute('aria-label','Photo '+(photoIndex+1)+' of '+photos.length);
+    }
+    function shiftPhoto(delta) {
+      photoIndex = (photoIndex + delta + photos.length) % photos.length;
+      renderPhoto();
+    }
+    function loadPhotos() {
+      if (photosRequested || !(window.google && google.script && google.script.run)) return;
+      photosRequested = true;
+      google.script.run
+        .withSuccessHandler(result => {
+          if (Array.isArray(result)) {
+            photos = captions.map((caption,i) => ({
+              caption: typeof result[i]?.caption === 'string' ? result[i].caption : caption,
+              image: typeof result[i]?.image === 'string' && result[i].image.startsWith('data:image/') ? result[i].image : ''
+            }));
+            renderPhoto();
+          }
+        })
+        .withFailureHandler(error => {
+          console.warn('Photos not loaded; showing placeholders.', error);
+          photosRequested = false;
+        })
+        .getPhotos();
+    }
+    let swipeStartX = 0;
+    document.querySelector('.photo-stage').addEventListener('touchstart',event => {swipeStartX = event.changedTouches[0].screenX;},{passive:true});
+    document.querySelector('.photo-stage').addEventListener('touchend',event => {
+      const diff = event.changedTouches[0].screenX - swipeStartX;
+      if (Math.abs(diff)>45) shiftPhoto(diff<0?1:-1);
+    },{passive:true});
+
+    function chooseDate(key) {
+      if (!dateDetails[key]) return;
+      selectedDate = key;
+      document.querySelectorAll('[data-date]').forEach(btn => btn.classList.toggle('selected',btn.dataset.date===key));
+      $('dateResult').textContent = 'DATE IDEA SELECTED! 💗 ' + dateDetails[key].response;
+      $('dateResult').hidden = false;
+      $('dateNext').hidden = false;
+      floatHearts(9);
+    }
+    function openLetter() {
+      $('openLetter').hidden = true;
+      $('letter').hidden = false;
+      $('letterNext').hidden = false;
+      requestAnimationFrame(() => $('letter').classList.add('open'));
+      floatHearts(7);
+    }
+    function unlock() {
+      $('secretLocked').hidden = true;
+      $('secretPass').hidden = false;
+      floatHearts(35);
+    }
+    function showBouquet() {
+      $('secretPass').hidden = true;
+      $('secretBouquet').hidden = false;
+      if (selectedDate) {
+        $('finalDate').textContent = 'P.S. Our next date: ' + dateDetails[selectedDate].name + ' 💌';
+        $('finalDate').hidden = false;
+      }
+      floatHearts(30);
+    }
+    function sendKiss() {
+      $('kissBtn').hidden = true;
+      $('kissResponse').hidden = false;
+      $('replayBtn').hidden = false;
+      floatHearts(85);
+    }
+    function replay() {
+      quizIndex = 0; quizAnswered = false; meterCount = 0; selectedDate = '';
+      $('meterGame').hidden = false; $('meterResult').hidden = true; $('meterNext').hidden = true;
+      $('tapHeart').disabled = false; $('tapHeart').style.setProperty('--heart-scale','1');
+      $('meterDots').querySelectorAll('span').forEach(dot => dot.classList.remove('on'));
+      $('meterStatus').textContent = 'Go on, Bebe! Give it a tap. 👀';
+      document.querySelectorAll('[data-date]').forEach(button => button.classList.remove('selected'));
+      $('dateResult').hidden = true; $('dateNext').hidden = true;
+      $('openLetter').hidden = false; $('letter').hidden = true; $('letter').classList.remove('open'); $('letterNext').hidden = true;
+      $('secretLocked').hidden = false; $('secretPass').hidden = true; $('secretBouquet').hidden = true;
+      $('kissBtn').hidden = false; $('kissResponse').hidden = true; $('replayBtn').hidden = true; $('finalDate').hidden = true;
+      showScreen(1);
+    }
+
+    // All decorations are rendered locally, with no tracking or external packages.
+    function floatHearts(amount) {
+      if (prefersReducedMotion) return;
+      const layer = $('floatingLayer');
+      const symbols = ['💗','💕','💖','♡','✨','💘'];
+      for (let i=0;i<amount;i++) {
+        const heart = document.createElement('span');
+        heart.className = 'flying-heart';
+        heart.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+        heart.style.setProperty('--left',(5+Math.random()*90)+'%');
+        heart.style.setProperty('--drift',(-80+Math.random()*160)+'px');
+        heart.style.setProperty('--font-size',(15+Math.random()*20)+'px');
+        heart.style.setProperty('--duration',(2.6+Math.random()*2.7)+'s');
+        heart.style.animationDelay = (Math.random()*0.65)+'s';
+        layer.appendChild(heart);
+        setTimeout(() => heart.remove(), 6500);
+      }
+    }
+    if (!prefersReducedMotion) setInterval(() => {
+      if (currentScreen>1 && document.visibilityState==='visible') floatHearts(1);
+    }, 2600);
+
+    // Soft self-generated instrumental: no MP3, licensing or external hosting required.
+    // Audio must begin after a user gesture due to mobile autoplay policies.
+    const melody = [
+      [392,0],[440,0],[523.25,0],[659.25,0],
+      [587.33,0],[523.25,0],[440,0],[392,0],
+      [349.23,0],[392,0],[440,0],[523.25,0],
+      [440,0],[392,0],[329.63,0],[392,0]
+    ];
+    function playNote(freq, time, duration, volume) {
+      if (!audioCtx || !musicOn) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq,time);
+      gain.gain.setValueAtTime(.0001,time);
+      gain.gain.exponentialRampToValueAtTime(volume,time+.07);
+      gain.gain.exponentialRampToValueAtTime(.0001,time+duration);
+      osc.connect(gain).connect(audioCtx.destination);
+      osc.start(time); osc.stop(time+duration+.03);
+    }
+    function scheduleNotes() {
+      if (!audioCtx || !musicOn || audioCtx.state!=='running') return;
+      while (nextNoteTime < audioCtx.currentTime + .55) {
+        const index = noteIndex % melody.length;
+        playNote(melody[index][0], nextNoteTime, .43, .023);
+        if (index % 4 === 0) {
+          const chords = [261.63,220,174.61,196];
+          playNote(chords[Math.floor(index/4)], nextNoteTime, 1.3, .008);
+        }
+        nextNoteTime += .37;
+        noteIndex++;
+      }
+    }
+    function updateMusicButton() {
+      $('musicLabel').textContent = musicOn ? 'ON' : 'OFF';
+      $('musicToggle').setAttribute('aria-label',musicOn?'Turn music off':'Turn music on');
+      $('musicToggle').setAttribute('aria-pressed',String(musicOn));
+    }
+    async function setMusic(enabled) {
+      const AudioConstructor = window.AudioContext || window.webkitAudioContext;
+      if (!AudioConstructor) {musicOn = false;updateMusicButton();return;}
+      try {
+        if (!audioCtx) audioCtx = new AudioConstructor();
+        if (enabled) {
+          // Called by click handlers; browser can resume in response to gesture.
+          await audioCtx.resume();
+          musicOn = true;
+          nextNoteTime = audioCtx.currentTime + .03;
+          if (audioTimer) clearInterval(audioTimer);
+          scheduleNotes();
+          audioTimer = setInterval(scheduleNotes,180);
+        } else {
+          musicOn = false;
+          if (audioTimer) clearInterval(audioTimer);
+          audioTimer = null;
+          await audioCtx.suspend();
+        }
+      } catch (error) {console.warn('Music unavailable on this device:',error);musicOn=false;}
+      updateMusicButton();
+    }
+
+    $('musicToggle').addEventListener('click',() => setMusic(!musicOn));
+    $('tapHeart').addEventListener('click',tapMeter);
+    document.addEventListener('click',event => {
+      const dateButton = event.target.closest('[data-date]');
+      if (dateButton) {chooseDate(dateButton.dataset.date);return;}
+      const btn = event.target.closest('[data-action]');
+      if (!btn) return;
+      const action = btn.dataset.action;
+      if (action==='start') {setMusic(true);floatHearts(24);showScreen(2);}
+      else if (action==='quiz-next') nextQuiz();
+      else if (action==='to-photos') showScreen(4);
+      else if (action==='photo-prev') shiftPhoto(-1);
+      else if (action==='photo-next') shiftPhoto(1);
+      else if (action==='to-date') showScreen(5);
+      else if (action==='to-letter') showScreen(6);
+      else if (action==='open-letter') openLetter();
+      else if (action==='to-secret') showScreen(7);
+      else if (action==='unlock') unlock();
+      else if (action==='bouquet') showBouquet();
+      else if (action==='kiss') sendKiss();
+      else if (action==='replay') replay();
+    });
+    updateMusicButton();
+    renderPhoto();
+    showScreen(1);
+  </script>
+</body>
+</html>
